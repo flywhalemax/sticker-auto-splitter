@@ -28,7 +28,7 @@ jobs:
       
       - name: Build executable
         run: |
-          pyinstaller --onefile --name sticker-splitter-windows sticker_splitter.py
+          pyinstaller --onefile --name sticker-splitter-windows --icon=icon.ico sticker_splitter.py
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4
