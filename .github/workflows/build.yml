@@ -78,11 +78,8 @@ jobs:
           name: sticker-splitter-macos
           path: ./macos
       
-      - name: Upload Release Assets
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            ./windows/sticker-splitter-windows.exe
-            ./macos/sticker-splitter-macos
+      - name: Upload to Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload ${{ github.event.release.tag_name }} ./windows/sticker-splitter-windows.exe ./macos/sticker-splitter-macos --repo ${{ github.repository }}
