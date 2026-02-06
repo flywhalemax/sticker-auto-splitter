@@ -1,0 +1,85 @@
+name: Build Executables
+
+on:
+  push:
+    branches: [ master, main ]
+  release:
+    types: [ created ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller opencv-python numpy pillow
+      
+      - name: Build executable
+        run: |
+          pyinstaller --onefile --name sticker-splitter-windows sticker_splitter.py
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sticker-splitter-windows
+          path: dist/sticker-splitter-windows.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller opencv-python numpy pillow
+      
+      - name: Build executable
+        run: |
+          pyinstaller --onefile --name sticker-splitter-macos sticker_splitter.py
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sticker-splitter-macos
+          path: dist/sticker-splitter-macos
+
+  release:
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    steps:
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: sticker-splitter-windows
+          path: ./windows
+      
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: sticker-splitter-macos
+          path: ./macos
+      
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./windows/sticker-splitter-windows.exe
+            ./macos/sticker-splitter-macos
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
