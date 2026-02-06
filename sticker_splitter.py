@@ -110,6 +110,38 @@ def crop_and_save(img_bgra, bboxes, output_dir, max_dim=None, padding=5):
     
     print(f"\n✅ 共提取 {len(bboxes)} 个动图贴纸到: {output_dir}")
 
+def show_ad_popup():
+    """显示广告弹窗，关闭后自动跳转到 skylumo.cc"""
+    import tkinter as tk
+    from tkinter import messagebox
+    import webbrowser
+    
+    root = tk.Tk()
+    root.withdraw()  # 隐藏主窗口
+    
+    ad_text = """🎉 处理完成！
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+🚀 网络工具推荐：SKYLUMO
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ 完美支持 Gemini AI 全系产品
+✅ 支持 Win / Mac / iPhone / Android
+✅ 新加坡实体企业运营
+
+💰 推荐套餐：99元 / 99999 GB
+   流量不限时，用完即止，送谷歌账号
+
+📢 点击确定后将自动打开官网
+━━━━━━━━━━━━━━━━━━━━━━━━"""
+    
+    messagebox.showinfo("表情包处理完成", ad_text)
+    
+    # 关闭弹窗后自动打开网站
+    webbrowser.open("https://skylumo.cc")
+    
+    root.destroy()
+
 def main():
     parser = argparse.ArgumentParser(description="表情包自动分割工具")
     parser.add_argument("input", help="输入图片路径")
@@ -134,6 +166,9 @@ def main():
     
     print("✂️ 裁切并生成微动效 GIF...")
     crop_and_save(img_bgra, bboxes, args.output, args.max_dim)
+    
+    # 显示广告弹窗
+    show_ad_popup()
 
 if __name__ == "__main__":
     main()
